@@ -3,7 +3,7 @@ const Users = require('../models/user');
 const session = require('./session');
 
 router.post('/register', async (req, res) => {
-  if (typeof req.body.password === 'string' || req.body.password.length < 8) {
+  if (typeof req.body.password !== 'string' || req.body.password.length < 8) {
     return res
       .status(400)
       .send({ error: 'Password must be at least 8 characters' });
@@ -22,7 +22,7 @@ router.post('/register', async (req, res) => {
 
 router.post('/login', async (req, res) => {
   try {
-    const user = Users.findOne({ email: req.body.email });
+    const user = await Users.findOne({ email: req.body.email });
     if (!user) {
       return res.status(400).send({ error: 'Invalid username' });
     }
@@ -48,7 +48,7 @@ router.delete('/logout', (req, res) => {
 
 router.get('/authenticate', async (req, res) => {
   try {
-    const user = Users.findById(req.session.uid);
+    const user = await Users.findById(req.session.uid);
     if (!user) {
       return res.status(401).send({ error: 'Please login to continue' });
     }

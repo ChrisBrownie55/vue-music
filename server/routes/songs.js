@@ -1,34 +1,40 @@
 const router = require('express').Router();
-const Collection = require('../models/song');
+const Songs = require('../models/song');
+const PlaylistSongs = require('../models/playlist-song');
 
-router.get('/', (req, res, next) =>
-  Collection.find({})
-    .then(items => res.send(items))
-    .catch(next)
-);
-
-router.get('/:id', (req, res, next) =>
-  Collection.findById(req.params.id)
-    .then(item => res.send(item))
+router.get('/:playlistId', (req, res, next) =>
+  PlaylistSongs.find({ playlistId: req.params.playlistId })
+    .then(playlistSongs => {
+      Songs.populate(
+        playlistSongs,
+        [{ path: 'songId' }],
+        (error, playlistSongs) => {
+          if (error) {
+            next(error);
+          }
+          res.send(playlistSongs.map(playlistSong => playlistSong.songId));
+        }
+      );
+    })
     .catch(next)
 );
 
 router.post('/', (req, res, next) =>
-  Collection.create(req.body)
+  Songs.create(req.body)
     .then(item => res.send(item))
     .catch(next)
 );
 
-router.put('/:id', (req, res, next) =>
-  Collection.findByIdAndUpdate(req.params.id, req.body)
-    .then(() => res.send({ message: 'Successfully updated item.' }))
-    .catch(next)
-);
+// router.put('/:id', (req, res, next) =>
+//   Songs.findByIdAndUpdate(req.params.id, req.body)
+//     .then(() => res.send({ message: 'Successfully updated item.' }))
+//     .catch(next)
+// );
 
-router.delete('/:id', (req, res, next) =>
-  Collection.findByIdAndRemove(req.params.id)
-    .then(() => res.send({ message: 'Successfully deleted item.' }))
-    .catch(next)
-);
+// router.delete('/:id', (req, res, next) =>
+//   Songs.findByIdAndRemove(req.params.id)
+//     .then(() => res.send({ message: 'Successfully deleted item.' }))
+//     .catch(next)
+// );
 
 module.exports = router;

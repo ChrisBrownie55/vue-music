@@ -1,15 +1,24 @@
 const server = require('express')();
 
 const cors = require('cors');
-server.use(cors({ credentials: true }));
+var whitelist = ['http://localhost:8080'];
+var corsOptions = {
+  origin: function(origin, callback) {
+    var originIsWhitelisted = whitelist.indexOf(origin) !== -1;
+    callback(null, originIsWhitelisted);
+  },
+  credentials: true
+};
+server.use(cors(corsOptions));
+require('./db/db-config');
 
 const bp = require('body-parser');
 server.use(bp.json());
 server.use(bp.urlencoded({ extended: true }));
 
 const auth = require('./auth/routes');
-server.use('/auth', auth.session);
-server.use('/auth', auth.router);
+server.use(auth.session);
+server.use(auth.router);
 
 server.use((req, res, next) => {
   if (!req.session.uid) {
@@ -17,8 +26,6 @@ server.use((req, res, next) => {
   }
   next();
 });
-
-require('./db/db-config');
 
 const routes = {
   songs: require('./routes/songs'),
@@ -33,5 +40,5 @@ server.use('*', (req, res) =>
   res.status(404).send('<h1>404 NO PAGE HERE</h1>')
 );
 
-const port = 3000;
-server.listen(port, () => console.log(`Server started on port: port`));
+const port = 3002;
+server.listen(port, () => console.log(`Server started on port: ${port}`));
