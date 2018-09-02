@@ -1,14 +1,14 @@
 <template>
-  <main>
+  <article class='song'>
 
-  </main>
+  </article>
 </template>
 
 <script>
 export default {
-  name: 'home'
+  name: 'song'
 };
 </script>
 
-<style scoped lang='scss'>
+<style scoped>
 </style>

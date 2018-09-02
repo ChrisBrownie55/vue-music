@@ -1,14 +1,14 @@
 <template>
-  <main>
+  <div>
 
-  </main>
+  </div>
 </template>
 
 <script>
 export default {
-  name: 'home'
+  name: 'audio-player'
 };
 </script>
 
-<style scoped lang='scss'>
+<style scoped>
 </style>
