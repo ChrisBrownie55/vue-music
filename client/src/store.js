@@ -32,23 +32,32 @@ export default new Vuex.Store({
     }
   },
   actions: {
-    register ({ commit }, newUser) {
-      backend.post('/register', newUser).then(res => {
+    async register ({ commit }, newUser) {
+      try {
+        const res = backend.post('/register', newUser)
         commit('setUser', res.data)
         router.push({ name: 'home' })
-      })
+      } catch (error) {
+        console.warn(error)
+      }
     },
-    authenticate ({ commit }) {
-      backend.get('/authenticate').then(res => {
+    async authenticate ({ commit }) {
+      try {
+        const res = backend.get('/authenticate')
         commit('setUser', res.data)
         router.push({ name: 'home' })
-      })
+      } catch (error) {
+        console.warn(error)
+      }
     },
-    login ({ commit }, creds) {
-      backend.post('/login', creds).then(res => {
+    async login ({ commit }, creds) {
+      try {
+        const res = backend.post('/login', creds)
         commit('setUser', res.data)
         router.push({ name: 'home' })
-      })
+      } catch (error) {
+        console.warn(error)
+      }
     }
   }
 })
