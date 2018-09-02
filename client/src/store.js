@@ -10,7 +10,7 @@ import Playlist from './models/playlist'
 Vue.use(Vuex)
 
 const backend = Axios.create({
-  baseURL: 'https://localhost:3002',
+  baseURL: '//localhost:3002',
   timeout: 3000,
   withCredentials: true
 })
@@ -59,7 +59,7 @@ export default new Vuex.Store({
         console.warn(error)
       }
     },
-    async logout ({ commit }, creds) {
+    async logout ({ commit }) {
       try {
         await backend.delete('/logout')
         commit('setUser')
