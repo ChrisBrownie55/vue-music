@@ -34,7 +34,7 @@ export default new Vuex.Store({
   actions: {
     async register ({ commit }, newUser) {
       try {
-        const res = backend.post('/register', newUser)
+        const res = await backend.post('/register', newUser)
         commit('setUser', res.data)
         router.push({ name: 'home' })
       } catch (error) {
@@ -43,7 +43,7 @@ export default new Vuex.Store({
     },
     async authenticate ({ commit }) {
       try {
-        const res = backend.get('/authenticate')
+        const res = await backend.get('/authenticate')
         commit('setUser', res.data)
         router.push({ name: 'home' })
       } catch (error) {
@@ -52,9 +52,18 @@ export default new Vuex.Store({
     },
     async login ({ commit }, creds) {
       try {
-        const res = backend.post('/login', creds)
+        const res = await backend.post('/login', creds)
         commit('setUser', res.data)
         router.push({ name: 'home' })
+      } catch (error) {
+        console.warn(error)
+      }
+    },
+    async logout ({ commit }, creds) {
+      try {
+        await backend.delete('/logout')
+        commit('setUser')
+        router.push({ name: 'login' })
       } catch (error) {
         console.warn(error)
       }
