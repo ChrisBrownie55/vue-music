@@ -38,13 +38,13 @@ export default {
   },
   methods: {
     playSong(song) {
-      this.$store.dispatch('playSong', song);
+      this.$store.dispatch('play', song);
     },
     addToPlaylist(song) {
       this.$store.dispatch('addToPlaylist', song);
     },
     pauseSong() {
-      this.$store.dispatch('pauseSong');
+      this.$store.dispatch('pause');
     }
   },
   components: {

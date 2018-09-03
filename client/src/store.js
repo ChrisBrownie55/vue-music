@@ -24,11 +24,13 @@ export default new Vuex.Store({
     user: new User(), // empty user
     songs: [],
     activePlaylist: new Playlist(),
-    playlists: []
+    playlists: [],
+    activeSong: new Song()
   },
   getters: {
     loggedIn: state => !!state.user._id,
-    playlistSelected: state => !!state.activePlaylist._id
+    playlistSelected: state => !!state.activePlaylist._id,
+    songPlaying: state => !!state.activeSong.trackId
   },
   mutations: {
     setUser (state, user) {
@@ -45,6 +47,9 @@ export default new Vuex.Store({
     },
     setActivePlaylist (state, playlist) {
       state.activePlaylist = playlist
+    },
+    removeSongFromPlaylist (state, song) {
+      state.activePlaylist.songs = state.activePlaylist.songs.filter(s => s.trackId !== song.trackId)
     }
   },
   actions: {
@@ -118,14 +123,52 @@ export default new Vuex.Store({
         console.warn(error)
       }
     },
-    setActivePlaylist ({ commit, state }, playlist) {
-      if (state.activePlaylist === playlist) {
-        return commit('setActivePlaylist', new Playlist())
-      }
+    setActivePlaylist ({ commit }, playlist) {
       commit('setActivePlaylist', playlist)
     },
-    async addSongToPlaylist ({ commit, state }, song) {
-
+    async addToPlaylist ({ dispatch, state }, song) {
+      try {
+        const { data: songData } = await backend.post('/api/songs/', {
+          name: song.name,
+          artist: song.artist,
+          album: song.album,
+          imgURL: song.imgURL,
+          songURL: song.songURL,
+          trackId: song.trackId
+        })
+        song._id = songData._id
+        await backend.post('/api/playlists/add-song', {
+          songId: song._id,
+          playlistId: state.activePlaylist._id
+        })
+        dispatch('updatePlaylists')
+      } catch (error) {
+        console.warn(error)
+      }
+    },
+    async removePlaylist ({ commit, state }, playlist) {
+      try {
+        await backend.delete('/api/playlists/' + playlist._id)
+        const playlists = state.playlists.filter(currentPlaylist => currentPlaylist._id !== playlist._id)
+        commit('setPlaylists', playlists)
+        if (playlist._id === state.activePlaylist._id) {
+          commit('setActivePlaylist', new Playlist())
+        }
+      } catch (error) {
+        console.warn(error)
+      }
+    },
+    async removeFromPlaylist ({ commit, state }, song) {
+      try {
+        backend.delete('/api/playlists/delete-song/' + state.activePlaylist._id + '/' + song._id)
+        commit('removeSongFromPlaylist', song)
+      } catch (error) {
+        console.warn(error)
+      }
+    },
+    async updatePlaylists ({ dispatch, state }) {
+      await dispatch('getPlaylists')
+      dispatch('setActivePlaylist', state.playlists.find(p => p._id === state.activePlaylist._id) || new Playlist())
     }
   }
 })

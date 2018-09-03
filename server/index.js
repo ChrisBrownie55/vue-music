@@ -35,7 +35,9 @@ const routes = {
 server.use('/api/songs', routes.songs);
 server.use('/api/playlists', routes.playlists);
 
-server.use('/api/*', (error, req, res) => res.status(400).send(error));
+server.use('/api/*', (error, req, res, next) => {
+  res.status(400).send(error);
+});
 server.use('*', (req, res) =>
   res.status(404).send('<h1>404 NO PAGE HERE</h1>')
 );

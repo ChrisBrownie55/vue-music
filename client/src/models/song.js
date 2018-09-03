@@ -6,7 +6,7 @@ export default class Song {
     imgURL,
     previewUrl, songURL,
     trackId,
-    _id }) {
+    _id } = {}) {
     this.name = trackName || name
     this.artist = artistName || artist
     this.album = collectionName || album

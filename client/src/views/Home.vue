@@ -11,7 +11,12 @@
     <div class='content-container'>
       <section class='playlist-sidebar' :class='{ open: showPlaylists }'>
         <section class='active-playlist'>
-          <h3 class='font-weight-medium text-truncate'>Playlist Name</h3>
+          <transition mode='out-in'>
+            <playlist v-if='$store.getters.playlistSelected' :data='activePlaylist' v-on:removePlaylisit='removePlaylist' v-on:renamePlaylist='renamePlaylist' />
+            <div v-else>
+              <h3 class='font-weight-medium'>No playlist selected</h3>
+            </div>
+          </transition>
         </section>
         <v-divider></v-divider>
         <section class='playlists'>
@@ -59,6 +64,7 @@
 <script>
 import SearchBar from '@/components/SearchBar.vue';
 import iTunes from '@/components/iTunes.vue';
+import Playlist from '@/components/Playlist.vue';
 
 export default {
   name: 'home',
@@ -94,11 +100,15 @@ export default {
   computed: {
     playlists() {
       return this.$store.state.playlists;
+    },
+    activePlaylist() {
+      return this.$store.state.activePlaylist;
     }
   },
   components: {
     SearchBar,
-    iTunes
+    iTunes,
+    Playlist
   },
   mounted() {
     this.$store.dispatch('getPlaylists');
@@ -173,10 +183,10 @@ main {
   flex-direction: column;
 
   &.open {
-    width: 20rem;
+    width: 25rem;
 
     & + .search {
-      margin-left: 20rem;
+      margin-left: 25rem;
     }
   }
   .new-playlist {

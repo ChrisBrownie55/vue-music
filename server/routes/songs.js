@@ -2,6 +2,10 @@ const router = require('express').Router();
 const Songs = require('../models/song');
 const PlaylistSongs = require('../models/playlist-song');
 
+router.get('/', (req, res, next) =>
+  Songs.find({}).then(items => res.send(items))
+);
+
 router.get('/:playlistId', (req, res, next) =>
   PlaylistSongs.find({ playlistId: req.params.playlistId })
     .then(playlistSongs => {
@@ -10,7 +14,7 @@ router.get('/:playlistId', (req, res, next) =>
         [{ path: 'songId' }],
         (error, playlistSongs) => {
           if (error) {
-            next(error);
+            return next(error);
           }
           res.send(playlistSongs.map(playlistSong => playlistSong.songId));
         }
@@ -23,7 +27,7 @@ router.post('/', (req, res, next) =>
   Songs.findOneAndUpdate(
     req.body,
     req.body,
-    { upsert: true },
+    { upsert: true, new: true },
     (error, item) => {
       if (error) {
         return next(error);

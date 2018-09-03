@@ -20,13 +20,16 @@ router.post('/', (req, res, next) =>
 );
 
 router.put('/:id', (req, res, next) =>
-  Playlist.findByIdAndUpdate(req.params.id, req.body)
+  Playlist.findOneAndUpdate(
+    { _id: req.params.id, userId: req.session.uid },
+    req.body
+  )
     .then(() => res.send({ message: 'Successfully updated item.' }))
     .catch(next)
 );
 
 router.delete('/:id', (req, res, next) =>
-  Playlist.findByIdAndRemove(req.params.id)
+  Playlist.findOneAndRemove({ _id: req.params.id, userId: req.session.uid })
     .then(() => res.send({ message: 'Successfully deleted item.' }))
     .catch(next)
 );
@@ -37,7 +40,7 @@ router.post('/add-song', (req, res, next) => {
       PlaylistSongs.findOneAndUpdate(
         req.body,
         req.body,
-        { upsert: true },
+        { upsert: true, new: true },
         (error, record) => {
           if (error) {
             return next(error);
@@ -49,15 +52,21 @@ router.post('/add-song', (req, res, next) => {
     .catch(next);
 });
 
-router.delete('/delete-song', (req, res, next) => {
-  Playlist.find({ _id: req.body.playlistId, userId: req.session.uid })
+router.delete('/delete-song/:playlistId/:songId', (req, res, next) => {
+  Playlist.find({ _id: req.params.playlistId, userId: req.session.uid })
     .then(() =>
-      PlaylistSongs.findOneAndRemove(req.body, error => {
-        if (error) {
-          return res.status(400).send(error);
+      PlaylistSongs.findOneAndRemove(
+        {
+          playlistId: req.params.playlistId,
+          songId: req.params.songId
+        },
+        error => {
+          if (error) {
+            return next(error)
+          }
+          res.send({ message: 'Successfully deleted item.' });
         }
-        res.send({ message: 'Successfully deleted item.' });
-      })
+      )
     )
     .catch(next);
 });
