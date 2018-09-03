@@ -20,7 +20,7 @@ schema.statics.generateHash = function(password) {
   return bcrypt.hashSync(password, SALT);
 };
 schema.methods.validatePassword = function(password) {
-  return bcrypt.compare(password, this.password);
+  return bcrypt.compareSync(password, this.password);
 };
 
 module.exports = mongoose.model('User', schema);

@@ -6,8 +6,8 @@
     <section class='content'>
       <v-text-field autofocus :rules='usernameRules' type='text' v-model='username' label='Username' required />
       <v-text-field class='mb-3' :rules='passwordRules' :type='passwordShowing ? "text" : "password"' v-model='password' label='Password' required />
-      <v-btn type='submit' raised class='primary' :disabled='!valid'>Login</v-btn>
-      <v-btn flat class='primary--text' :disabled='!valid' @click='register'>Register</v-btn>
+      <v-btn type='submit' round raised class='primary' :disabled='!valid'>Login</v-btn>
+      <v-btn flat round class='primary--text' :disabled='!valid' @click='register'>Register</v-btn>
     </section>
   </v-form>
 </template>
@@ -108,6 +108,26 @@ label.label {
   }
   to {
     transform: translateY(0);
+  }
+}
+</style>
+
+<style lang='scss'>
+.v-input__slot {
+  &::before {
+    border-width: 1px 0 0 0 !important;
+  }
+  &::after {
+    border-width: 0 0 2px 0 !important;
+  }
+
+  .v-text-field__slot {
+    label {
+      font-weight: 400 !important;
+    }
+    input {
+      font-weight: 500 !important;
+    }
   }
 }
 </style>

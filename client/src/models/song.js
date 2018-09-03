@@ -1,13 +1,18 @@
 export default class Song {
-  constructor ({ trackName, artistName, collectionName, imgURL, previewUrl, trackId, _id }) {
-    this.name = trackName
-    this.artist = artistName
-    this.album = collectionName
+  constructor ({
+    trackName, name,
+    artistName, artist,
+    collectionName, album,
+    imgURL,
+    previewUrl, songURL,
+    trackId,
+    _id }) {
+    this.name = trackName || name
+    this.artist = artistName || artist
+    this.album = collectionName || album
     this.imgURL = imgURL
-    this.songURL = previewUrl
+    this.songURL = previewUrl || songURL
     this.trackId = trackId
-    if (_id) {
-      this._id = _id
-    }
+    this._id = _id
   }
 }

@@ -27,7 +27,8 @@ export default new Vuex.Store({
     playlists: []
   },
   getters: {
-    loggedIn: state => state.user._id && state.user.username
+    loggedIn: state => !!state.user._id,
+    playlistSelected: state => !!state.activePlaylist._id
   },
   mutations: {
     setUser (state, user) {
@@ -38,6 +39,12 @@ export default new Vuex.Store({
         ...song,
         imgURL: song.artworkUrl100.replace('100x100bb', '570x570cc')
       }))
+    },
+    setPlaylists (state, playlists) {
+      state.playlists = playlists
+    },
+    setActivePlaylist (state, playlist) {
+      state.activePlaylist = playlist
     }
   },
   actions: {
@@ -80,7 +87,7 @@ export default new Vuex.Store({
     async searchItunes ({ commit }, search) {
       try {
         const { data } = await itunes.get(search)
-        commit('setSongs', data.results)
+        commit('setSongs', data.results.filter(song => !song.artworkUrl100.includes('Video') && song.trackName))
       } catch (error) {
         console.warn(error)
       }
@@ -91,17 +98,34 @@ export default new Vuex.Store({
     async getPlaylists ({ commit }) {
       try {
         const { data } = await backend.get('/api/playlists')
-        commit ('setPlaylists', data)
+        const playlists = data.map(playlist => new Playlist(playlist))
+        await Promise.all(playlists.map(async playlist => {
+          const { data: songsData } = await backend.get('/api/songs/' + playlist._id)
+          playlist.songs = songsData.map(song => new Song(song))
+        }))
+        commit('setPlaylists', playlists)
       } catch (error) {
         console.warn(error)
       }
     },
-    async createPlaylist ({ dispatch, commit }, name) {
+    async createPlaylist ({ commit, state }, name) {
       try {
         const { data } = await backend.post('/api/playlists', { name })
+        const playlist = new Playlist(data)
+        commit('setPlaylists', [...state.playlists, playlist])
+        commit('setActivePlaylist', playlist)
       } catch (error) {
         console.warn(error)
       }
+    },
+    setActivePlaylist ({ commit, state }, playlist) {
+      if (state.activePlaylist === playlist) {
+        return commit('setActivePlaylist', new Playlist())
+      }
+      commit('setActivePlaylist', playlist)
+    },
+    async addSongToPlaylist ({ commit, state }, song) {
+
     }
   }
 })

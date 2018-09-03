@@ -54,7 +54,7 @@ router.delete('/delete-song', (req, res, next) => {
     .then(() =>
       PlaylistSongs.findOneAndRemove(req.body, error => {
         if (error) {
-          res.status(400).send(error);
+          return res.status(400).send(error);
         }
         res.send({ message: 'Successfully deleted item.' });
       })

@@ -20,9 +20,17 @@ router.get('/:playlistId', (req, res, next) =>
 );
 
 router.post('/', (req, res, next) =>
-  Songs.create(req.body)
-    .then(item => res.send(item))
-    .catch(next)
+  Songs.findOneAndUpdate(
+    req.body,
+    req.body,
+    { upsert: true },
+    (error, item) => {
+      if (error) {
+        return next(error);
+      }
+      res.send(item);
+    }
+  )
 );
 
 // router.put('/:id', (req, res, next) =>
