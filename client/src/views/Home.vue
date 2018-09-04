@@ -12,7 +12,7 @@
       <section class='playlist-sidebar' :class='{ open: showPlaylists }'>
         <section class='active-playlist'>
           <transition mode='out-in'>
-            <playlist v-if='$store.getters.playlistSelected' :data='activePlaylist' v-on:removePlaylisit='removePlaylist' v-on:renamePlaylist='renamePlaylist' />
+            <playlist v-if='$store.getters.playlistSelected' :data='activePlaylist' v-on:removePlaylist='removePlaylist' v-on:renamePlaylist='renamePlaylist' />
             <div v-else>
               <h3 class='font-weight-medium'>No playlist selected</h3>
             </div>
@@ -91,6 +91,7 @@ export default {
       this.newPlaylist.open = false;
     },
     removePlaylist(playlist) {
+      console.log('test');
       this.$store.dispatch('removePlaylist', playlist);
     },
     openPlaylist(playlist) {

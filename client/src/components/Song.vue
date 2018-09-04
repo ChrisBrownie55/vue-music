@@ -1,5 +1,5 @@
 <template>
-  <v-card class='song-card'>
+  <v-card class='song-card' :class='{ hover: $props.isPlaying }'>
     <v-img :src='data.imgURL' aspect-ratio='1'>
       <transition mode='out-in'>
         <div class='actions' v-if='!$props.isPlaying' key='play-addToPlaylist'>

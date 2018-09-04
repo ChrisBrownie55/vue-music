@@ -23,7 +23,7 @@
       <section v-else class='songs elevation-2'>
         <div style='display: contents;' v-for='(song, index) in $props.data.songs' :key='song._id'>
           <v-divider v-if='index' />
-          <article class='song'>
+          <article class='song' :class='{ hover: $store.state.songQueue.length && $store.state.songQueue[0].trackId === song.trackId }'>
             <v-img :src='song.imgURL'>
               <transition mode='out-in'>
                 <div class='actions' v-if='$store.getters.isPlaying && $store.state.songQueue[0].trackId === song.trackId' key='pause'>
@@ -169,7 +169,8 @@ header {
       }
     }
   }
-  &:hover .v-image {
+  &:hover .v-image,
+  &.hover .v-image {
     .v-image__image {
       filter: brightness(35%);
     }
