@@ -7,6 +7,10 @@
 <style lang="scss">
 @import url('https://fonts.googleapis.com/css?family=Roboto:100,300,400,500,700');
 
+html {
+  overflow: auto;
+}
+
 body {
   margin: 0;
 }

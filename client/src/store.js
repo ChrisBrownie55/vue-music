@@ -25,12 +25,13 @@ export default new Vuex.Store({
     songs: [],
     activePlaylist: new Playlist(),
     playlists: [],
-    activeSong: new Song()
+    songQueue: [],
+    isPlaying: false
   },
   getters: {
     loggedIn: state => !!state.user._id,
     playlistSelected: state => !!state.activePlaylist._id,
-    songPlaying: state => !!state.activeSong.trackId
+    isPlaying: state => !!state.isPlaying
   },
   mutations: {
     setUser (state, user) {
@@ -50,6 +51,21 @@ export default new Vuex.Store({
     },
     removeSongFromPlaylist (state, song) {
       state.activePlaylist.songs = state.activePlaylist.songs.filter(s => s.trackId !== song.trackId)
+    },
+    setSong (state, song) {
+      if (state.songQueue.length && state.songQueue[0].trackId === song.trackId) {
+        return
+      }
+      state.songQueue = [song, ...state.songQueue]
+    },
+    play (state) {
+      state.isPlaying = true
+    },
+    pause (state) {
+      state.isPlaying = false
+    },
+    nextSong (state) {
+      state.songQueue.shift()
     }
   },
   actions: {
@@ -169,6 +185,23 @@ export default new Vuex.Store({
     async updatePlaylists ({ dispatch, state }) {
       await dispatch('getPlaylists')
       dispatch('setActivePlaylist', state.playlists.find(p => p._id === state.activePlaylist._id) || new Playlist())
+    },
+    play ({ commit, state }, song) {
+      if (!state.songQueue.length && !song) {
+        return commit('pause')
+      }
+      if (!song) {
+        return commit('play')
+      }
+      commit('pause')
+      commit('setSong', song)
+      setTimeout(() => commit('play'), 10)
+    },
+    pause ({ commit }) {
+      commit('pause')
+    },
+    async nextSong ({ commit, dispatch }) {
+      await commit('nextSong')
     }
   }
 })

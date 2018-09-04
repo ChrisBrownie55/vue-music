@@ -9,7 +9,7 @@
         <h4>No results.</h4>
       </div>
       <div class='songs' v-else key='songs'>
-        <song card v-for='(song, index) in songs' :key='index' :data='song' v-on:play='playSong' v-on:addToPlaylist='addToPlaylist' v-on:pause='pauseSong' />
+        <song card v-for='(song, index) in songs' :isPlaying='$store.getters.isPlaying && $store.state.songQueue[0].trackId === song.trackId' :key='index' :data='song' v-on:play='playSong' v-on:addToPlaylist='addToPlaylist' v-on:pause='pauseSong' />
       </div>
     </transition>
   </section>

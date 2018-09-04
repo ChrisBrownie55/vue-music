@@ -43,9 +43,9 @@
         </div>
       </section>
       <section class='search'>
-        <search-bar v-model='search' />
-        <iTunes :search='search' />
-        <section class='audio-bar'></section>
+        <search-bar v-model='search'></search-bar>
+        <iTunes :search='search'></iTunes>
+        <audio-player class='audio'></audio-player>
       </section>
     </div>
     <dialog :open='newPlaylist.open' class='modal elevation-15'>
@@ -65,6 +65,7 @@
 import SearchBar from '@/components/SearchBar.vue';
 import iTunes from '@/components/iTunes.vue';
 import Playlist from '@/components/Playlist.vue';
+import AudioPlayer from '@/components/AudioPlayer.vue';
 
 export default {
   name: 'home',
@@ -108,7 +109,8 @@ export default {
   components: {
     SearchBar,
     iTunes,
-    Playlist
+    Playlist,
+    AudioPlayer
   },
   mounted() {
     this.$store.dispatch('getPlaylists');
@@ -151,7 +153,6 @@ header {
 .search {
   display: flex;
   flex-direction: column;
-  justify-content: space-between;
   height: 100%;
   width: 100%;
   transition: margin-left 0.2s;
@@ -159,13 +160,22 @@ header {
 }
 
 main {
-  height: calc(100% - 2.5rem);
+  height: 100%;
   padding-top: 2.5rem;
 }
 
 .content-container {
   display: flex;
   height: 100%;
+}
+
+.audio {
+  position: fixed;
+  bottom: 0;
+  width: 100%;
+  background-color: white;
+  transition: width 0.2s;
+  will-change: width;
 }
 
 .playlist-sidebar {
@@ -187,6 +197,10 @@ main {
 
     & + .search {
       margin-left: 25rem;
+
+      .audio {
+        width: calc(100% - 25rem);
+      }
     }
   }
   .new-playlist {
@@ -225,7 +239,7 @@ main {
 }
 
 .modal {
-  position: absolute;
+  position: fixed;
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
