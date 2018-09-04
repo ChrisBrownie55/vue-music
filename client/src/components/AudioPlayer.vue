@@ -1,7 +1,7 @@
 <template>
   <section class='audio-player'>
     <article class='buttons'>
-      <v-btn icon @click='store.$dispatch("previousSong")'>
+      <v-btn icon @click='$store.dispatch("previousSong")'>
         <v-icon>skip_previous</v-icon>
       </v-btn>
       <transition mode='out-in'>

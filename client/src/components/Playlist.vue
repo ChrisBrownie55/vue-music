@@ -2,10 +2,10 @@
   <div class='playlist'>
     <header>
       <h3 class='font-weight-medium text-truncate'>{{ $props.data.name }}</h3>
-      <v-btn icon @click='$emit("playPlaylist")'>
+      <v-btn icon @click='$store.dispatch("playPlaylist")'>
         <v-icon>play_arrow</v-icon>
       </v-btn>
-      <v-btn icon @click='$emit("shufflePlaylist")'>
+      <v-btn icon @click='$store.dispatch("shufflePlaylist")'>
         <v-icon>shuffle</v-icon>
       </v-btn>
       <v-menu>
