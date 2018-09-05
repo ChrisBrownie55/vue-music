@@ -22,7 +22,7 @@ router.post('/register', async (req, res) => {
 
 router.post('/login', async (req, res) => {
   try {
-    const user = await Users.findOne({ email: req.body.email });
+    const user = await Users.findOne({ username: req.body.username });
     if (!user) {
       return res.status(400).send({ error: 'Invalid username' });
     }

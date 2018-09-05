@@ -16,6 +16,18 @@ const bp = require('body-parser');
 server.use(bp.json());
 server.use(bp.urlencoded({ extended: true }));
 
+// const Users = require('./models/user');
+// server.get('/users', (req, res, next) => {
+//   Users.find({})
+//     .then(items => res.send(items))
+//     .catch(next);
+// });
+// server.delete('/users/:id', (req, res, next) => {
+//   Users.findByIdAndRemove(req.params.id)
+//     .then(() => res.send({ message: 'Success' }))
+//     .catch(next);
+// });
+
 const auth = require('./auth/routes');
 server.use(auth.session);
 server.use(auth.router);
