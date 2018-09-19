@@ -9,8 +9,11 @@ import Playlist from './models/playlist'
 
 Vue.use(Vuex)
 
+const production = !window.location.host.includes('localhost')
+const baseURL = production ? '//vusic.herokuapp.com' : '//localhost:3002'
+
 const backend = Axios.create({
-  baseURL: '//localhost:3002',
+  baseURL: baseURL,
   timeout: 3000,
   withCredentials: true
 })

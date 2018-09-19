@@ -1,7 +1,11 @@
-const server = require('express')();
+const express = require('express');
+const server = express();
+const app = require('http').createServer(server);
+
+server.use(express.static(__dirname + '/../client/dist/'))
 
 const cors = require('cors');
-var whitelist = ['http://localhost:8080'];
+var whitelist = ['http://localhost:8080', 'https://vusic.herokuapp.com/'];
 var corsOptions = {
   origin: function(origin, callback) {
     var originIsWhitelisted = whitelist.indexOf(origin) !== -1;
@@ -54,5 +58,5 @@ server.use('*', (req, res) =>
   res.status(404).send('<h1>404 NO PAGE HERE</h1>')
 );
 
-const port = 3002;
+const port = process.env.PORT || 3002;
 server.listen(port, () => console.log(`Server started on port: ${port}`));
