@@ -30,7 +30,8 @@ export default new Vuex.Store({
     playlists: [],
     songQueue: [],
     isPlaying: false,
-    finishedSongs: []
+    finishedSongs: [],
+    snackbar: false
   },
   getters: {
     loggedIn: state => !!state.user._id,
@@ -80,16 +81,28 @@ export default new Vuex.Store({
     setQueue (state, newQueue) {
       state.songQueue = [...newQueue]
       state.finishedSongs = []
+    },
+    setSnackbar (state, message) {
+      state.snackbar = message
     }
   },
   actions: {
+    setSnackbar ({ commit }, error) {
+      let message
+      if (error instanceof Error) {
+        message = error.response && error.response.data ? error.response.data.error : 'An error has occurred.'
+      } else {
+        message = error
+      }
+      commit('setSnackbar', message)
+    },
     async register ({ commit }, newUser) {
       try {
         const { data } = await backend.post('/register', newUser)
         commit('setUser', data)
         router.push({ name: 'home' })
       } catch (error) {
-        console.warn(error)
+        this.dispatch('setSnackbar', error)
       }
     },
     async authenticate ({ commit }) {
@@ -98,7 +111,8 @@ export default new Vuex.Store({
         commit('setUser', data)
         router.push({ name: 'home' })
       } catch (error) {
-        console.warn(error)
+        // this.dispatch('setSnackbar', error)
+        // swallow your errors
       }
     },
     async login ({ commit }, creds) {
@@ -107,7 +121,7 @@ export default new Vuex.Store({
         commit('setUser', data)
         router.push({ name: 'home' })
       } catch (error) {
-        console.warn(error)
+        this.dispatch('setSnackbar', error)
       }
     },
     async logout ({ commit }) {
@@ -116,7 +130,7 @@ export default new Vuex.Store({
         commit('setUser')
         router.push({ name: 'login' })
       } catch (error) {
-        console.warn(error)
+        this.dispatch('setSnackbar', error)
       }
     },
     async searchItunes ({ commit }, search) {
@@ -124,7 +138,7 @@ export default new Vuex.Store({
         const { data } = await itunes.get(search)
         commit('setSongs', data.results.filter(song => !song.artworkUrl100.includes('Video') && song.trackName))
       } catch (error) {
-        console.warn(error)
+        this.dispatch('setSnackbar', error)
       }
     },
     clearSongs ({ commit }) {
@@ -140,7 +154,7 @@ export default new Vuex.Store({
         }))
         commit('setPlaylists', playlists)
       } catch (error) {
-        console.warn(error)
+        this.dispatch('setSnackbar', error)
       }
     },
     async createPlaylist ({ commit, state }, name) {
@@ -150,7 +164,7 @@ export default new Vuex.Store({
         commit('setPlaylists', [...state.playlists, playlist])
         commit('setActivePlaylist', playlist)
       } catch (error) {
-        console.warn(error)
+        this.dispatch('setSnackbar', error)
       }
     },
     setActivePlaylist ({ commit }, playlist) {
@@ -173,7 +187,7 @@ export default new Vuex.Store({
         })
         dispatch('updatePlaylists')
       } catch (error) {
-        console.warn(error)
+        this.dispatch('setSnackbar', error)
       }
     },
     async removePlaylist ({ commit, state }, playlist) {
@@ -185,7 +199,7 @@ export default new Vuex.Store({
           commit('setActivePlaylist', new Playlist())
         }
       } catch (error) {
-        console.warn(error)
+        this.dispatch('setSnackbar', error)
       }
     },
     async removeFromPlaylist ({ commit, state }, song) {
@@ -193,7 +207,7 @@ export default new Vuex.Store({
         backend.delete('/api/playlists/delete-song/' + state.activePlaylist._id + '/' + song._id)
         commit('removeSongFromPlaylist', song)
       } catch (error) {
-        console.warn(error)
+        this.dispatch('setSnackbar', error)
       }
     },
     async updatePlaylists ({ dispatch, state }) {
